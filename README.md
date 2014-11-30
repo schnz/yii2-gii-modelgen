@@ -28,7 +28,7 @@ Furthermore Gii needs to know of the newly available model template. This is arc
 [...]
 'class' => 'yii\gii\Module',
 'generators' => [
-    'model' => ['class' => 'common\gii\generators\model\Generator'],
+    'model' => ['class' => 'coksnuss\gii\modelgen\generators\model\Generator'],
 ],
 [...]
 ~~~
