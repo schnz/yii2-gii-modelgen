@@ -1,0 +1,22 @@
+{
+    "name": "coksnuss/yii2-gii-modelgen",
+    "description": "A tweaked model generator for the Gii module of the Yii 2 framework.",
+    "keywords": ["yii2", "gii", "model template"],
+    "type": "yii2-extension",
+    "license": "MIT License",
+    "authors": [
+        {
+            "name": "Markus Schanz",
+            "email": "coksnuss@googlemail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "~2.0",
+        "yiisoft/yii2i-gii": "~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "coksnuss\\gii\\modelgen\\": ""
+        }
+    }
+}
