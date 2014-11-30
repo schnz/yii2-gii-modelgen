@@ -8,7 +8,7 @@ use yii\web\AssetBundle;
  */
 class GiiAsset extends AssetBundle
 {
-    public $sourcePath = '@coksnuss/gii/assets';
+    public $sourcePath = '@coksnuss/gii/modelgen/assets';
     public $js = [
         'gii.js',
     ];

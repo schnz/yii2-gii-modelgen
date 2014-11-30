@@ -10,7 +10,7 @@ class Generator extends \yii\gii\generators\model\Generator
 {
     public $ns = 'app\models\base';
     public $useTablePrefix = true;
-    public $includeTimestampBehavior = true;
+    public $includeTimestampBehavior = false;
     public $createdColumnName = 'created_at';
     public $updatedColumnName = 'updated_at';
 
