@@ -4,12 +4,16 @@ namespace coksnuss\gii\modelgen\generators\model;
 use Yii;
 use yii\gii\CodeFile;
 use yii\helpers\StringHelper;
+use yii\db\ActiveQuery;
 use common\gii\GiiAsset;
 
 class Generator extends \yii\gii\generators\model\Generator
 {
     public $ns = 'app\models\base';
     public $useTablePrefix = true;
+    public $generateQueryClass = true;
+    public $queryNs = 'app\models\query';
+    public $baseQueryClass = 'yii\db\ActiveQuery';
     public $includeTimestampBehavior = false;
     public $createdColumnName = 'created_at';
     public $updatedColumnName = 'updated_at';
@@ -26,8 +30,11 @@ class Generator extends \yii\gii\generators\model\Generator
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['includeTimestampBehavior'], 'boolean'],
-            [['createdColumnName', 'updatedColumnName'], 'filter', 'filter' => 'trim'],
+            [['queryNs', 'baseQueryClass', 'createdColumnName', 'updatedColumnName'],  'filter', 'filter' => 'trim'],
+            [['queryNs'], 'filter', 'filter' => function($value) { return trim($value, '\\'); }],
+            [['queryNs'], 'validateNamespace'],
+            [['baseQueryClass'], 'validateClass', 'params' => ['extends' => ActiveQuery::className()]],
+            [['includeTimestampBehavior', 'generateQueryClass'], 'boolean'],
         ]);
     }
 
@@ -36,7 +43,7 @@ class Generator extends \yii\gii\generators\model\Generator
      */
     public function requiredTemplates()
     {
-        return ['model.php', 'child_model.php'];
+        return ['model.php', 'child_model.php', 'query.php'];
     }
 
     /**
@@ -44,7 +51,14 @@ class Generator extends \yii\gii\generators\model\Generator
      */
     public function stickyAttributes()
     {
-        return array_merge(parent::stickyAttributes(), ['includeTimestampBehavior', 'createdColumnName', 'updatedColumnName']);
+        return array_merge(parent::stickyAttributes(), [
+            'generateQueryClass',
+            'queryNs',
+            'baseQueryClass',
+            'includeTimestampBehavior',
+            'createdColumnName',
+            'updatedColumnName',
+        ]);
     }
 
    /**
@@ -53,11 +67,15 @@ class Generator extends \yii\gii\generators\model\Generator
     public function hints()
     {
         return array_merge(parent::hints(), [
-            'includeTimestampBehavior' => 'Automatically includes a timestamp behavior to set the created_at and updated_at
-                fields automatically. This option will also modify the rules accordingly.',
-            'createdColumnName' => 'The column name of the field that is set to the current time when a new record is added.',
-            'updatedColumnName' => 'The column name of the field that is set to the current time when a new record is added
-                or an existing record is updated.',
+            'generateQueryClass' => 'Whether to generate an empty ActiveQuery class which can be used to define scopes.',
+            'queryNs' => 'The namespace/directory in which the ActiveQuery class is beeing generated in.',
+            'baseQueryClass' => 'The class which is used as parent class.',
+            'includeTimestampBehavior' => 'Automatically includes a timestamp behavior to set the created_at and
+                updated_at fields automatically. This option will also modify the rules accordingly.',
+            'createdColumnName' => 'The column name of the field that is set to the current time when a new record is
+                added.',
+            'updatedColumnName' => 'The column name of the field that is set to the current time when a new record is
+                added or an existing record is updated.',
         ]);
     }
 
@@ -69,6 +87,7 @@ class Generator extends \yii\gii\generators\model\Generator
         $files = parent::generate();
 
         $db = $this->getDbConnection();
+
         foreach ($this->getTableNames() as $tableName) {
             $className = $this->generateClassName($tableName);
             $params = [
@@ -79,6 +98,20 @@ class Generator extends \yii\gii\generators\model\Generator
                 Yii::getAlias('@' . str_replace('\\', '/', $this->getChildNs())) . '/' . $className . '.php',
                 $this->render('child_model.php', $params)
             );
+        }
+
+        if ($this->generateQueryClass) {
+            foreach ($this->getTableNames() as $tableName) {
+                $className = $this->generateQueryClassName($tableName);
+                $params = [
+                    'tableName' => $tableName,
+                    'className' => $className,
+                ];
+                $files[] = new CodeFile(
+                    Yii::getAlias('@' . str_replace('\\', '/', $this->queryNs)) . '/' . $className . '.php',
+                    $this->render('query.php', $params)
+                );
+            }
         }
 
         return $files;
@@ -137,15 +170,6 @@ class Generator extends \yii\gii\generators\model\Generator
     }
 
     /**
-     * @return string The namespace for the child class which is used by the
-     * developers for non-automatically generated code.
-     */
-    public function getChildNs()
-    {
-        return StringHelper::dirname($this->ns);
-    }
-
-    /**
      * @inheritdoc
      */
     protected function getTableNames()
@@ -158,5 +182,24 @@ class Generator extends \yii\gii\generators\model\Generator
         }
 
         return $tableNames;
+    }
+
+    /**
+     * @return string The namespace for the child class which is used by the
+     * developers for non-automatically generated code.
+     */
+    public function getChildNs()
+    {
+        return StringHelper::dirname($this->ns);
+    }
+
+    /**
+     * Generates a class name from the specified table name.
+     * @param string $tableName the table name (which may contain schema prefix)
+     * @return string the generated class name
+     */
+    public function generateQueryClassName($tableName)
+    {
+        return $this->generateClassName($tableName) . 'Query';
     }
 }

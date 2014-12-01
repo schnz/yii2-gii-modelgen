@@ -18,6 +18,10 @@ echo "<?php\n";
 namespace <?= $generator->ns ?>;
 
 use Yii;
+<?php if ($generator->generateQueryClass): ?>
+use <?= $generator->queryNs . '\\' . $generator->generateQueryClassName($tableName); ?>
+
+<?php endif; ?>
 
 /**
  * This is the model class for table "<?= $generator->generateTableName($tableName) ?>".
@@ -51,6 +55,17 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
     public static function getDb()
     {
         return Yii::$app->get('<?= $generator->db ?>');
+    }
+<?php endif; ?>
+<?php if ($generator->generateQueryClass): ?>
+
+    /**
+     * @inheritdoc
+     * @return <?= $generator->generateQueryClassName($tableName); ?> The finder instance.
+     */
+    public static function find()
+    {
+        return new <?= $generator->generateQueryClassName($tableName); ?>(get_called_class());
     }
 <?php endif; ?>
 <?php if ($generator->includeTimestampBehavior): ?>
