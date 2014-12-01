@@ -19,7 +19,7 @@ namespace <?= $generator->ns ?>;
 
 use Yii;
 <?php if ($generator->generateQueryClass): ?>
-use <?= $generator->queryNs . '\\' . $generator->generateQueryClassName($tableName); ?>
+use <?= $generator->queryNs . '\\' . $generator->generateQueryClassName($tableName); ?>;
 
 <?php endif; ?>
 
