@@ -7,6 +7,7 @@
 /* @var $generator yii\gii\generators\model\Generator */
 /* @var $tableName string full table name */
 /* @var $className string class name */
+/* @var $queryClassName string query class name */
 /* @var $tableSchema yii\db\TableSchema */
 /* @var $labels string[] list of attribute labels (name => label) */
 /* @var $rules string[] list of validation rules */
@@ -18,10 +19,6 @@ echo "<?php\n";
 namespace <?= $generator->ns ?>;
 
 use Yii;
-<?php if ($generator->generateQueryClass): ?>
-use <?= $generator->queryNs . '\\' . $generator->generateQueryClassName($tableName); ?>;
-
-<?php endif; ?>
 
 /**
  * This is the model class for table "<?= $generator->generateTableName($tableName) ?>".
@@ -57,15 +54,18 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
         return Yii::$app->get('<?= $generator->db ?>');
     }
 <?php endif; ?>
-<?php if ($generator->generateQueryClass): ?>
-
+<?php if ($queryClassName): ?>
+<?php
+    $queryClassFullName = ($generator->ns === $generator->queryNs) ? $queryClassName : '\\' . $generator->queryNs . '\\' . $queryClassName;
+    echo "\n";
+?>
     /**
      * @inheritdoc
-     * @return <?= $generator->generateQueryClassName($tableName); ?> The finder instance.
+     * @return <?= $queryClassFullName ?> the active query used by this AR class.
      */
     public static function find()
     {
-        return new <?= $generator->generateQueryClassName($tableName); ?>(get_called_class());
+        return new <?= $queryClassFullName ?>(get_called_class());
     }
 <?php endif; ?>
 <?php if ($generator->includeTimestampBehavior): ?>

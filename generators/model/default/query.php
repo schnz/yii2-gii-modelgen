@@ -1,24 +1,29 @@
 <?php
 /**
- * This is the template for generating the query class of a specified table.
+ * This is the template for generating the ActiveQuery class.
  */
 
 /* @var $this yii\web\View */
 /* @var $generator yii\gii\generators\model\Generator */
-/* @var $tableName string full table name */
 /* @var $className string class name */
+/* @var $modelClassName string related model class name */
+
+$modelFullClassName = $modelClassName;
+if ($generator->ns !== $generator->queryNs) {
+    $modelFullClassName = '\\' . $generator->ns . '\\' . $modelFullClassName;
+}
 
 echo "<?php\n";
 ?>
 
 namespace <?= $generator->queryNs ?>;
 
-use Yii;
-
 /**
- * This is the ActiveQuery class for table "<?= $generator->generateTableName($tableName) ?>".
- * It can be used to define custom scopes.
+ * This is the ActiveQuery class for [[<?= $modelFullClassName ?>]].
+ *
+ * @see <?= $modelFullClassName . "\n" ?>
  */
-class <?= $className ?> extends <?= '\\' . ltrim($generator->baseQueryClass, '\\') . "\n" ?>
+class <?= $className ?> extends <?= '\\' . ltrim($generator->queryBaseClass, '\\') . "\n" ?>
 {
+
 }
