@@ -37,6 +37,7 @@ use Yii;
  */
 abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?>
 {
+<?php if ($generator->isNonStandardTableName($tableName, $className)): ?>
     /**
      * @inheritdoc
      */
@@ -44,8 +45,9 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
     {
         return '<?= $generator->generateTableName($tableName) ?>';
     }
-<?php if ($generator->db !== 'db'): ?>
 
+<?php endif; ?>
+<?php if ($generator->db !== 'db'): ?>
     /**
      * @return \yii\db\Connection the database connection used by this AR class.
      */
@@ -53,12 +55,10 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
     {
         return Yii::$app->get('<?= $generator->db ?>');
     }
+
 <?php endif; ?>
 <?php if ($queryClassName): ?>
-<?php
-    $queryClassFullName = ($generator->ns === $generator->queryNs) ? $queryClassName : '\\' . $generator->queryNs . '\\' . $queryClassName;
-    echo "\n";
-?>
+<?php $queryClassFullName = ($generator->ns === $generator->queryNs) ? $queryClassName : '\\' . $generator->queryNs . '\\' . $queryClassName; ?>
     /**
      * @inheritdoc
      * @return <?= $queryClassFullName ?> the active query used by this AR class.
@@ -67,9 +67,9 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
     {
         return new <?= $queryClassFullName ?>(get_called_class());
     }
+
 <?php endif; ?>
 <?php if ($generator->includeTimestampBehavior): ?>
-
     /**
      * @inheritdoc
      */
@@ -80,12 +80,11 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
                 'class' => 'yii\behaviors\TimestampBehavior',
                 'createdAtAttribute' => '<?= $generator->createdColumnName ?>',
                 'updatedAtAttribute' => '<?= $generator->updatedColumnName ?>',
-                'value' => new \yii\db\Expression('NOW()'),
             ],
         ];
     }
-<?php endif; ?>
 
+<?php endif; ?>
     /**
      * @inheritdoc
      */

@@ -3,9 +3,11 @@ namespace coksnuss\gii\modelgen\generators\model;
 
 use Yii;
 use yii\gii\CodeFile;
+use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
 use yii\db\ActiveQuery;
 use common\gii\GiiAsset;
+
 
 class Generator extends \yii\gii\generators\model\Generator
 {
@@ -173,5 +175,13 @@ class Generator extends \yii\gii\generators\model\Generator
     public function getChildNs()
     {
         return StringHelper::dirname($this->ns);
+    }
+
+    public function isNonStandardTableName($tableName, $className)
+    {
+        return $this->generateTableName($tableName) !==
+            '{{%' .
+            Inflector::camel2id(StringHelper::basename($className), '_') .
+            '}}';
     }
 }
