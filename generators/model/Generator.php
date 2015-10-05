@@ -113,21 +113,19 @@ class Generator extends \yii\gii\generators\model\Generator
             foreach ($rules as $i => $rule) {
                 list($ruleFields, $ruleName) = eval("return {$rule};");
 
-                if ($ruleName === 'required' || $ruleName == 'safe') {
-                    if (($key = array_search($this->createdColumnName, $ruleFields)) !== false) {
-                        unset($ruleFields[$key]);
-                    }
+                if (($key = array_search($this->createdColumnName, $ruleFields)) !== false) {
+                    unset($ruleFields[$key]);
+                }
 
-                    if (($key = array_search($this->updatedColumnName, $ruleFields)) !== false) {
-                        unset($ruleFields[$key]);
-                    }
+                if (($key = array_search($this->updatedColumnName, $ruleFields)) !== false) {
+                    unset($ruleFields[$key]);
+                }
 
-                    if (empty($ruleFields)) {
-                        unset($rules[$i]);
-                    } else {
-                        $newRuleFields = "['" . implode("', '", $ruleFields) . "']";
-                        $rules[$i] = preg_replace('#^\[\[[^\]]+\]#', '[' . $newRuleFields, $rule);
-                    }
+                if (empty($ruleFields)) {
+                    unset($rules[$i]);
+                } else {
+                    $newRuleFields = "['" . implode("', '", $ruleFields) . "']";
+                    $rules[$i] = preg_replace('#^\[\[[^\]]+\]#', '[' . $newRuleFields, $rule);
                 }
             }
         }
