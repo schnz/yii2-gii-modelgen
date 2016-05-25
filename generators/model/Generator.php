@@ -111,6 +111,14 @@ class Generator extends \yii\gii\generators\model\Generator
         if ($this->includeTimestampBehavior)
         {
             foreach ($rules as $i => $rule) {
+                if (
+                    strpos($rule, "'{$this->createdColumnName}'") === false &&
+                    strpos($rule, "'{$this->updatedColumnName}'") === false ||
+                    strpos($rule, "'exist', " !== false)
+                ) {
+                    continue;
+                }
+
                 list($ruleFields, $ruleName) = eval("return {$rule};");
 
                 if (($key = array_search($this->createdColumnName, $ruleFields)) !== false) {
