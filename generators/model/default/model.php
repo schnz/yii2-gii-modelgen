@@ -80,6 +80,7 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
                 'class' => 'yii\behaviors\TimestampBehavior',
                 'createdAtAttribute' => '<?= $generator->createdColumnName ?>',
                 'updatedAtAttribute' => '<?= $generator->updatedColumnName ?>',
+                'value' => <?= $generator->getTimestampBehaviorValue() ?>,
             ],
         ];
     }
