@@ -5,6 +5,7 @@ use Yii;
 use yii\gii\CodeFile;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
+use yii\db\Schema;
 use yii\db\ActiveQuery;
 use common\gii\GiiAsset;
 
@@ -17,6 +18,9 @@ class Generator extends \yii\gii\generators\model\Generator
     public $includeTimestampBehavior = false;
     public $createdColumnName = 'created_at';
     public $updatedColumnName = 'updated_at';
+
+    private $_useDatetimeValue = false;
+
 
     public function init()
     {
@@ -110,6 +114,10 @@ class Generator extends \yii\gii\generators\model\Generator
 
         if ($this->includeTimestampBehavior)
         {
+            // Assume same datatype for created_at/updated_at columns
+            $this->_useDatetimeValue = isset($table->columns[$this->createdColumnName]) &&
+                $table->columns[$this->createdColumnName]->type === Schema::TYPE_DATETIME;
+
             foreach ($rules as $i => $rule) {
                 if (
                     strpos($rule, "'{$this->createdColumnName}'") === false &&
@@ -189,5 +197,10 @@ class Generator extends \yii\gii\generators\model\Generator
             '{{%' .
             Inflector::camel2id(StringHelper::basename($className), '_') .
             '}}';
+    }
+
+    public function getTimestampBehaviorValue()
+    {
+        return $this->_useDatetimeValue ? "date('Y-m-d H:i:s')" : 'time()';
     }
 }
