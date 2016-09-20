@@ -199,8 +199,35 @@ class Generator extends \yii\gii\generators\model\Generator
             '}}';
     }
 
-    public function getTimestampBehaviorValue()
+    public function getTimestampBehavior()
     {
-        return $this->_useDatetimeValue ? "date('Y-m-d H:i:s')" : 'time()';
+        if ($this->createdColumnName === 'created_at' &&
+            $this->updatedColumnName === 'updated_at' &&
+            !$this->_useDatetimeValue
+        ) {
+            return 'yii\behaviors\TimestampBehavior::class';
+        }
+
+        $config = ['class' => "yii\behaviors\TimestampBehavior::class"];
+
+        if ($this->createdColumnName !== 'created_at') {
+            $config['createdAtAttribute'] = "'$this->createdColumnName'";
+        }
+
+        if ($this->updatedColumnName !== 'updated_at') {
+            $config['updatedAtAttribute'] = "'$this->updatedColumnName'";
+        }
+
+        if ($this->_useDatetimeValue) {
+            $config['value'] = "date('Y-m-d H:i:s')";
+        }
+
+        array_walk($config, function (&$v, $k) { $v = sprintf("'%s' => %s", $k, $v); });
+
+        $config = "\n               " .
+            implode(",\n               ", array_values($config)) .
+            "\n           ";
+
+        return "'timestamp' => [${config}]";
     }
 }
