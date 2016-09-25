@@ -205,10 +205,10 @@ class Generator extends \yii\gii\generators\model\Generator
             $this->updatedColumnName === 'updated_at' &&
             !$this->_useDatetimeValue
         ) {
-            return 'yii\behaviors\TimestampBehavior::class';
+            return '\yii\behaviors\TimestampBehavior::class';
         }
 
-        $config = ['class' => "yii\behaviors\TimestampBehavior::class"];
+        $config = ['class' => "\yii\behaviors\TimestampBehavior::class"];
 
         if ($this->createdColumnName !== 'created_at') {
             $config['createdAtAttribute'] = "'$this->createdColumnName'";
