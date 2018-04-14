@@ -9,6 +9,7 @@
 /* @var $className string class name */
 /* @var $queryClassName string query class name */
 /* @var $tableSchema yii\db\TableSchema */
+/* @var $properties array list of properties (property => [type, name. comment]) */
 /* @var $labels string[] list of attribute labels (name => label) */
 /* @var $rules string[] list of validation rules */
 /* @var $relations array list of relations (name => relation declaration) */
@@ -25,8 +26,8 @@ use Yii;
  * Please do not add custom code to this file, as it is supposed to be overriden
  * by the gii model generator. Custom code belongs to <?= $generator->getChildNs() . '\\' . $className ?>.
  *
-<?php foreach ($tableSchema->columns as $column): ?>
- * @property <?= "{$column->phpType} \${$column->name}\n" ?>
+<?php foreach ($properties as $property => $data): ?>
+ * @property <?= "{$data['type']} \${$property}"  . ($data['comment'] ? ' ' . strtr($data['comment'], ["\n" => ' ']) : '') . "\n" ?>
 <?php endforeach; ?>
 <?php if (!empty($relations)): ?>
  *
@@ -57,18 +58,6 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
     }
 
 <?php endif; ?>
-<?php if ($queryClassName): ?>
-<?php $queryClassFullName = ($generator->ns === $generator->queryNs) ? $queryClassName : '\\' . $generator->queryNs . '\\' . $queryClassName; ?>
-    /**
-     * @inheritdoc
-     * @return <?= $queryClassFullName ?> the active query used by this AR class.
-     */
-    public static function find()
-    {
-        return new <?= $queryClassFullName ?>(get_called_class());
-    }
-
-<?php endif; ?>
 <?php if ($generator->includeTimestampBehavior): ?>
     /**
      * @inheritdoc
@@ -86,7 +75,7 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
      */
     public function rules()
     {
-        return [<?= "\n            " . implode(",\n            ", $rules) . "\n        " ?>];
+        return [<?= empty($rules) ? '' : ("\n            " . implode(",\n            ", $rules) . ",\n        ") ?>];
     }
 
     /**
@@ -110,4 +99,18 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
         <?= $relation[0] . "\n" ?>
     }
 <?php endforeach; ?>
+<?php if ($queryClassName): ?>
+<?php
+    $queryClassFullName = ($generator->ns === $generator->queryNs) ? $queryClassName : '\\' . $generator->queryNs . '\\' . $queryClassName;
+    echo "\n";
+?>
+    /**
+     * @inheritdoc
+     * @return <?= $queryClassFullName ?> the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new <?= $queryClassFullName ?>(get_called_class());
+    }
+<?php endif; ?>
 }

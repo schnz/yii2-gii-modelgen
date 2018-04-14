@@ -13,7 +13,6 @@ use common\gii\GiiAsset;
 class Generator extends \yii\gii\generators\model\Generator
 {
     public $ns = 'app\models\base';
-    public $useTablePrefix = true;
     public $queryNs = 'app\models\query';
     public $includeTimestampBehavior = false;
     public $createdColumnName = 'created_at';
@@ -37,9 +36,7 @@ class Generator extends \yii\gii\generators\model\Generator
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['queryNs', 'createdColumnName', 'updatedColumnName'],  'filter', 'filter' => 'trim'],
-            [['queryNs'], 'filter', 'filter' => function($value) { return trim($value, '\\'); }],
-            [['queryNs'], 'validateNamespace'],
+            [['createdColumnName', 'updatedColumnName'],  'filter', 'filter' => 'trim'],
             [['includeTimestampBehavior'], 'boolean'],
         ]);
     }
@@ -49,7 +46,7 @@ class Generator extends \yii\gii\generators\model\Generator
      */
     public function requiredTemplates()
     {
-        return ['model.php', 'child_model.php', 'query.php'];
+        return array_merge(parent::requiredTemplates(), ['child_model.php']);
     }
 
     /**
@@ -58,7 +55,6 @@ class Generator extends \yii\gii\generators\model\Generator
     public function stickyAttributes()
     {
         return array_merge(parent::stickyAttributes(), [
-            'queryNs',
             'includeTimestampBehavior',
             'createdColumnName',
             'updatedColumnName',
@@ -71,7 +67,6 @@ class Generator extends \yii\gii\generators\model\Generator
     public function hints()
     {
         return array_merge(parent::hints(), [
-            'queryNs' => 'The namespace/directory in which the ActiveQuery class is beeing generated in.',
             'includeTimestampBehavior' => 'Automatically includes a timestamp behavior to set the created_at and
                 updated_at fields automatically. This option will also modify the rules accordingly.',
             'createdColumnName' => 'The column name of the field that is set to the current time when a new record is
