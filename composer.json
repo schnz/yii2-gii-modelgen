@@ -3,7 +3,7 @@
     "description": "A tweaked model generator for the Gii module of the Yii 2 framework.",
     "keywords": ["yii2", "gii", "model template"],
     "type": "yii2-extension",
-    "license": "MIT License",
+    "license": "MIT",
     "authors": [
         {
             "name": "Markus Schanz",
