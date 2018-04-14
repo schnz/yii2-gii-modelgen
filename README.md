@@ -11,7 +11,7 @@ This extension basically adds three features to gii's basic model template gener
 1. The generated models are splitted into a base model and a concrete model. Whenever the database structure is changed (e.g. through a migration) the base model can simply be overridden by the newly generated model. No custom code is touched. All custom code is written into the concrete model which is used throughout the application and extends the base model.
 2. A new option is added to directly integrate the timestamp behavior into models by providing the column names of the created_at and updated_at column.
 3. When generating models for all tables using the wildcard operator `*` the migration table is omitted.
-~~4. In addition to the model class, it is possible to generate a query class.~~ (_This feature is now natively supported by Gii_)
+4. ~~In addition to the model class, it is possible to generate a query class.~~ (_This feature is now natively supported by Gii_)
 
 In addition, the template files were slightly adapted:
 
