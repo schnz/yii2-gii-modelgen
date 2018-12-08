@@ -2,6 +2,7 @@ yii2-gii-modelgen
 =================
 
 A tweaked model generator for the Gii module of the Yii 2 framework.
+The generator re-uses Gii-native code wherever possible and thus has a high chance of retaining all the latest changes of Gii without the need for an update. When checked for the last time, the generator retains the full featureset of Gii 2.0.8.
 
 What this extension does
 ------------------------

@@ -6,9 +6,6 @@ use yii\gii\CodeFile;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
 use yii\db\Schema;
-use yii\db\ActiveQuery;
-use common\gii\GiiAsset;
-
 
 class Generator extends \yii\gii\generators\model\Generator
 {
@@ -82,17 +79,16 @@ class Generator extends \yii\gii\generators\model\Generator
     public function generate()
     {
         $files = parent::generate();
-
         $db = $this->getDbConnection();
 
         foreach ($this->getTableNames() as $tableName) {
-            $className = $this->generateClassName($tableName);
+            $modelClassName = $this->generateClassName($tableName);
             $params = [
                 'tableName' => $tableName,
-                'className' => $className,
+                'className' => $modelClassName,
             ];
             $files[] = new CodeFile(
-                Yii::getAlias('@' . str_replace('\\', '/', $this->getChildNs())) . '/' . $className . '.php',
+                Yii::getAlias('@' . str_replace('\\', '/', $this->getChildNs())) . '/' . $modelClassName . '.php',
                 $this->render('child_model.php', $params)
             );
         }
@@ -127,11 +123,9 @@ class Generator extends \yii\gii\generators\model\Generator
                 if (($key = array_search($this->createdColumnName, $ruleFields)) !== false) {
                     unset($ruleFields[$key]);
                 }
-
                 if (($key = array_search($this->updatedColumnName, $ruleFields)) !== false) {
                     unset($ruleFields[$key]);
                 }
-
                 if (empty($ruleFields)) {
                     unset($rules[$i]);
                 } else {
